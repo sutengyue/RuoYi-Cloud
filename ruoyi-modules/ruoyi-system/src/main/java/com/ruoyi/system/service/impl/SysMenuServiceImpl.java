@@ -19,11 +19,14 @@ import com.ruoyi.common.core.constant.UserConstants;
 import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.core.utils.StringUtils;
+import com.ruoyi.common.core.utils.bean.BeanConvertUtils;
 import com.ruoyi.common.security.utils.SecurityUtils;
 import com.ruoyi.system.api.domain.SysRole;
 import com.ruoyi.system.domain.SysMenu;
+import com.ruoyi.system.domain.dto.SysMenuDTO;
 import com.ruoyi.system.domain.vo.MetaVo;
 import com.ruoyi.system.domain.vo.RouterVo;
+import com.ruoyi.system.domain.vo.SysMenuVO;
 import com.ruoyi.system.domain.vo.TreeSelect;
 import com.ruoyi.system.mapper.SysMenuMapper;
 import com.ruoyi.system.mapper.SysRoleMapper;
@@ -52,27 +55,21 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 根据用户查询系统菜单列表
-     * 
-     * @param userId 用户ID
-     * @return 菜单列表
      */
     @Override
-    public List<SysMenu> selectMenuList(Long userId)
+    public List<SysMenuVO> selectMenuList(Long userId)
     {
-        return selectMenuList(new SysMenu(), userId);
+        return selectMenuList(new SysMenuDTO(), userId);
     }
 
     /**
      * 查询系统菜单列表
-     * 
-     * @param menu 菜单信息
-     * @return 菜单列表
      */
     @Override
-    public List<SysMenu> selectMenuList(SysMenu menu, Long userId)
+    public List<SysMenuVO> selectMenuList(SysMenuDTO menuDTO, Long userId)
     {
+        SysMenu menu = BeanConvertUtils.convert(menuDTO, SysMenu.class);
         List<SysMenu> menuList = null;
-        // 管理员显示所有菜单信息
         if (SecurityUtils.isAdmin(userId))
         {
             menuList = baseMapper.selectMenuList(menu);
@@ -82,14 +79,11 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
             menu.getParams().put("userId", userId);
             menuList = baseMapper.selectMenuListByUserId(menu);
         }
-        return menuList;
+        return BeanConvertUtils.convertList(menuList, SysMenuVO.class);
     }
 
     /**
      * 根据用户ID查询权限
-     * 
-     * @param userId 用户ID
-     * @return 权限列表
      */
     @Override
     public Set<String> selectMenuPermsByUserId(Long userId)
@@ -108,9 +102,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 根据角色ID查询权限
-     * 
-     * @param roleId 角色ID
-     * @return 权限列表
      */
     @Override
     public Set<String> selectMenuPermsByRoleId(Long roleId)
@@ -129,9 +120,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 根据用户ID查询菜单
-     * 
-     * @param userId 用户名称
-     * @return 菜单列表
      */
     @Override
     public List<SysMenu> selectMenuTreeByUserId(Long userId)
@@ -150,9 +138,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 根据角色ID查询菜单树信息
-     * 
-     * @param roleId 角色ID
-     * @return 选中菜单列表
      */
     @Override
     public List<Long> selectMenuListByRoleId(Long roleId)
@@ -163,9 +148,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 构建前端路由所需要的菜单
-     * 
-     * @param menus 菜单列表
-     * @return 路由列表
      */
     @Override
     public List<RouterVo> buildMenus(List<SysMenu> menus)
@@ -221,9 +203,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 构建前端所需要树结构
-     * 
-     * @param menus 菜单列表
-     * @return 树结构列表
      */
     @Override
     public List<SysMenu> buildMenuTree(List<SysMenu> menus)
@@ -233,7 +212,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         for (Iterator<SysMenu> iterator = menus.iterator(); iterator.hasNext();)
         {
             SysMenu menu = (SysMenu) iterator.next();
-            // 如果是顶级节点, 遍历该父节点的所有子节点
             if (!tempList.contains(menu.getParentId()))
             {
                 recursionFn(menus, menu);
@@ -249,9 +227,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 构建前端所需要下拉树结构
-     * 
-     * @param menus 菜单列表
-     * @return 下拉树结构列表
      */
     @Override
     public List<TreeSelect> buildMenuTreeSelect(List<SysMenu> menus)
@@ -262,21 +237,16 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 根据菜单ID查询信息
-     * 
-     * @param menuId 菜单ID
-     * @return 菜单信息
      */
     @Override
-    public SysMenu selectMenuById(Long menuId)
+    public SysMenuVO selectMenuById(Long menuId)
     {
-        return baseMapper.selectMenuById(menuId);
+        SysMenu menu = baseMapper.selectMenuById(menuId);
+        return BeanConvertUtils.convert(menu, SysMenuVO.class);
     }
 
     /**
      * 是否存在菜单子节点
-     * 
-     * @param menuId 菜单ID
-     * @return 结果
      */
     @Override
     public boolean hasChildByMenuId(Long menuId)
@@ -287,9 +257,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 查询菜单使用数量
-     * 
-     * @param menuId 菜单ID
-     * @return 结果
      */
     @Override
     public boolean checkMenuExistRole(Long menuId)
@@ -300,33 +267,26 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 新增保存菜单信息
-     * 
-     * @param menu 菜单信息
-     * @return 结果
      */
     @Override
-    public int insertMenu(SysMenu menu)
+    public int insertMenu(SysMenuDTO menuDTO)
     {
+        SysMenu menu = BeanConvertUtils.convert(menuDTO, SysMenu.class);
         return baseMapper.insertMenu(menu);
     }
 
     /**
      * 修改保存菜单信息
-     * 
-     * @param menu 菜单信息
-     * @return 结果
      */
     @Override
-    public int updateMenu(SysMenu menu)
+    public int updateMenu(SysMenuDTO menuDTO)
     {
+        SysMenu menu = BeanConvertUtils.convert(menuDTO, SysMenu.class);
         return baseMapper.updateMenu(menu);
     }
 
     /**
      * 保存菜单排序
-     * 
-     * @param menuIds 菜单ID
-     * @param orderNums 排序ID
      */
     @Override
     @Transactional
@@ -350,9 +310,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 删除菜单管理信息
-     * 
-     * @param menuId 菜单ID
-     * @return 结果
      */
     @Override
     public int deleteMenuById(Long menuId)
@@ -362,13 +319,11 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 校验菜单名称是否唯一
-     * 
-     * @param menu 菜单信息
-     * @return 结果
      */
     @Override
-    public boolean checkMenuNameUnique(SysMenu menu)
+    public boolean checkMenuNameUnique(SysMenuDTO menuDTO)
     {
+        SysMenu menu = BeanConvertUtils.convert(menuDTO, SysMenu.class);
         Long menuId = StringUtils.isNull(menu.getMenuId()) ? -1L : menu.getMenuId();
         SysMenu info = baseMapper.checkMenuNameUnique(menu.getMenuName(), menu.getParentId());
         if (StringUtils.isNotNull(info) && info.getMenuId().longValue() != menuId.longValue())
@@ -380,13 +335,11 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 校验路由名称是否唯一
-     *
-     * @param menu 菜单信息
-     * @return 结果
      */
     @Override
-    public boolean checkRouteConfigUnique(SysMenu menu)
+    public boolean checkRouteConfigUnique(SysMenuDTO menuDTO)
     {
+        SysMenu menu = BeanConvertUtils.convert(menuDTO, SysMenu.class);
         Long menuId = StringUtils.isNull(menu.getMenuId()) ? -1L : menu.getMenuId();
         Long parentId = menu.getParentId();
         String path = menu.getPath();
@@ -421,13 +374,9 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 获取路由名称
-     * 
-     * @param menu 菜单信息
-     * @return 路由名称
      */
     public String getRouteName(SysMenu menu)
     {
-        // 非外链并且是一级目录（类型为目录）
         if (isMenuFrame(menu))
         {
             return StringUtils.EMPTY;
@@ -437,10 +386,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 获取路由名称，如没有配置路由名称则取路由地址
-     * 
-     * @param name 路由名称
-     * @param path 路由地址
-     * @return 路由名称（驼峰格式）
      */
     public String getRouteName(String name, String path)
     {
@@ -450,25 +395,19 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 获取路由地址
-     * 
-     * @param menu 菜单信息
-     * @return 路由地址
      */
     public String getRouterPath(SysMenu menu)
     {
         String routerPath = menu.getPath();
-        // 内链打开外网方式
         if (menu.getParentId().intValue() != MENU_ROOT_ID && isInnerLink(menu))
         {
             routerPath = innerLinkReplaceEach(routerPath);
         }
-        // 非外链并且是一级目录（类型为目录）
         if (MENU_ROOT_ID == menu.getParentId().intValue() && UserConstants.TYPE_DIR.equals(menu.getMenuType())
                 && UserConstants.NO_FRAME.equals(menu.getIsFrame()))
         {
             routerPath = "/" + menu.getPath();
         }
-        // 非外链并且是一级目录（类型为菜单）
         else if (isMenuFrame(menu))
         {
             routerPath = "/";
@@ -478,9 +417,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 获取组件信息
-     * 
-     * @param menu 菜单信息
-     * @return 组件信息
      */
     public String getComponent(SysMenu menu)
     {
@@ -502,9 +438,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 是否为菜单内部跳转
-     * 
-     * @param menu 菜单信息
-     * @return 结果
      */
     public boolean isMenuFrame(SysMenu menu)
     {
@@ -514,9 +447,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 是否为parent_view组件
-     * 
-     * @param menu 菜单信息
-     * @return 结果
      */
     public boolean isParentView(SysMenu menu)
     {
@@ -525,9 +455,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 是否为内链组件
-     * 
-     * @param menu 菜单信息
-     * @return 结果
      */
     public boolean isInnerLink(SysMenu menu)
     {
@@ -536,10 +463,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 根据父节点的ID获取所有子节点
-     * 
-     * @param list 分类表
-     * @param parentId 传入的父节点ID
-     * @return String
      */
     public List<SysMenu> getChildPerms(List<SysMenu> list, long parentId)
     {
@@ -547,7 +470,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         for (Iterator<SysMenu> iterator = list.iterator(); iterator.hasNext();)
         {
             SysMenu t = (SysMenu) iterator.next();
-            // 一、根据传入的某个父节点ID,遍历该父节点的所有子节点
             if (t.getParentId() == parentId)
             {
                 recursionFn(list, t);
@@ -559,13 +481,9 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 递归列表
-     * 
-     * @param list 分类表
-     * @param t 子节点
      */
     private void recursionFn(List<SysMenu> list, SysMenu t)
     {
-        // 得到子节点列表
         List<SysMenu> childList = getChildList(list, t);
         t.setChildren(childList);
         for (SysMenu tChild : childList)
@@ -605,8 +523,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     /**
      * 内链域名特殊字符替换
-     * 
-     * @return 替换后的内链域名
      */
     public String innerLinkReplaceEach(String path)
     {

@@ -21,6 +21,8 @@ import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.security.annotation.RequiresPermissions;
 import com.ruoyi.common.security.utils.SecurityUtils;
 import com.ruoyi.system.domain.SysConfig;
+import com.ruoyi.system.domain.dto.SysConfigDTO;
+import com.ruoyi.system.domain.vo.SysConfigVO;
 import com.ruoyi.system.service.ISysConfigService;
 
 /**
@@ -40,20 +42,20 @@ public class SysConfigController extends BaseController
      */
     @RequiresPermissions("system:config:list")
     @GetMapping("/list")
-    public TableDataInfo list(SysConfig config)
+    public TableDataInfo list(SysConfigDTO configDTO)
     {
         startPage();
-        List<SysConfig> list = configService.selectConfigList(config);
+        List<SysConfigVO> list = configService.selectConfigList(configDTO);
         return getDataTable(list);
     }
 
     @Log(title = "参数管理", businessType = BusinessType.EXPORT)
     @RequiresPermissions("system:config:export")
     @PostMapping("/export")
-    public void export(HttpServletResponse response, SysConfig config)
+    public void export(HttpServletResponse response, SysConfigDTO configDTO)
     {
-        List<SysConfig> list = configService.selectConfigList(config);
-        ExcelUtil<SysConfig> util = new ExcelUtil<SysConfig>(SysConfig.class);
+        List<SysConfigVO> list = configService.selectConfigList(configDTO);
+        ExcelUtil<SysConfigVO> util = new ExcelUtil<SysConfigVO>(SysConfigVO.class);
         util.exportExcel(response, list, "参数数据");
     }
 
@@ -81,14 +83,14 @@ public class SysConfigController extends BaseController
     @RequiresPermissions("system:config:add")
     @Log(title = "参数管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@Validated @RequestBody SysConfig config)
+    public AjaxResult add(@Validated @RequestBody SysConfigDTO configDTO)
     {
-        if (!configService.checkConfigKeyUnique(config))
+        if (!configService.checkConfigKeyUnique(configDTO))
         {
-            return error("新增参数'" + config.getConfigName() + "'失败，参数键名已存在");
+            return error("新增参数'" + configDTO.getConfigName() + "'失败，参数键名已存在");
         }
-        config.setCreateBy(SecurityUtils.getUsername());
-        return toAjax(configService.insertConfig(config));
+        configDTO.setCreateBy(SecurityUtils.getUsername());
+        return toAjax(configService.insertConfig(configDTO));
     }
 
     /**
@@ -97,14 +99,14 @@ public class SysConfigController extends BaseController
     @RequiresPermissions("system:config:edit")
     @Log(title = "参数管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@Validated @RequestBody SysConfig config)
+    public AjaxResult edit(@Validated @RequestBody SysConfigDTO configDTO)
     {
-        if (!configService.checkConfigKeyUnique(config))
+        if (!configService.checkConfigKeyUnique(configDTO))
         {
-            return error("修改参数'" + config.getConfigName() + "'失败，参数键名已存在");
+            return error("修改参数'" + configDTO.getConfigName() + "'失败，参数键名已存在");
         }
-        config.setUpdateBy(SecurityUtils.getUsername());
-        return toAjax(configService.updateConfig(config));
+        configDTO.setUpdateBy(SecurityUtils.getUsername());
+        return toAjax(configService.updateConfig(configDTO));
     }
 
     /**

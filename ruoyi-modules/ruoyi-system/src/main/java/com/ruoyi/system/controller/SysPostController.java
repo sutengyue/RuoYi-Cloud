@@ -20,7 +20,8 @@ import com.ruoyi.common.log.annotation.Log;
 import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.security.annotation.RequiresPermissions;
 import com.ruoyi.common.security.utils.SecurityUtils;
-import com.ruoyi.system.domain.SysPost;
+import com.ruoyi.system.domain.dto.SysPostDTO;
+import com.ruoyi.system.domain.vo.SysPostVO;
 import com.ruoyi.system.service.ISysPostService;
 
 /**
@@ -40,20 +41,20 @@ public class SysPostController extends BaseController
      */
     @RequiresPermissions("system:post:list")
     @GetMapping("/list")
-    public TableDataInfo list(SysPost post)
+    public TableDataInfo list(SysPostDTO postDTO)
     {
         startPage();
-        List<SysPost> list = postService.selectPostList(post);
+        List<SysPostVO> list = postService.selectPostList(postDTO);
         return getDataTable(list);
     }
 
     @Log(title = "岗位管理", businessType = BusinessType.EXPORT)
     @RequiresPermissions("system:post:export")
     @PostMapping("/export")
-    public void export(HttpServletResponse response, SysPost post)
+    public void export(HttpServletResponse response, SysPostDTO postDTO)
     {
-        List<SysPost> list = postService.selectPostList(post);
-        ExcelUtil<SysPost> util = new ExcelUtil<SysPost>(SysPost.class);
+        List<SysPostVO> list = postService.selectPostList(postDTO);
+        ExcelUtil<SysPostVO> util = new ExcelUtil<SysPostVO>(SysPostVO.class);
         util.exportExcel(response, list, "岗位数据");
     }
 
@@ -73,18 +74,18 @@ public class SysPostController extends BaseController
     @RequiresPermissions("system:post:add")
     @Log(title = "岗位管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@Validated @RequestBody SysPost post)
+    public AjaxResult add(@Validated @RequestBody SysPostDTO postDTO)
     {
-        if (!postService.checkPostNameUnique(post))
+        if (!postService.checkPostNameUnique(postDTO))
         {
-            return error("新增岗位'" + post.getPostName() + "'失败，岗位名称已存在");
+            return error("新增岗位'" + postDTO.getPostName() + "'失败，岗位名称已存在");
         }
-        else if (!postService.checkPostCodeUnique(post))
+        else if (!postService.checkPostCodeUnique(postDTO))
         {
-            return error("新增岗位'" + post.getPostName() + "'失败，岗位编码已存在");
+            return error("新增岗位'" + postDTO.getPostName() + "'失败，岗位编码已存在");
         }
-        post.setCreateBy(SecurityUtils.getUsername());
-        return toAjax(postService.insertPost(post));
+        postDTO.setCreateBy(SecurityUtils.getUsername());
+        return toAjax(postService.insertPost(postDTO));
     }
 
     /**
@@ -93,18 +94,18 @@ public class SysPostController extends BaseController
     @RequiresPermissions("system:post:edit")
     @Log(title = "岗位管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@Validated @RequestBody SysPost post)
+    public AjaxResult edit(@Validated @RequestBody SysPostDTO postDTO)
     {
-        if (!postService.checkPostNameUnique(post))
+        if (!postService.checkPostNameUnique(postDTO))
         {
-            return error("修改岗位'" + post.getPostName() + "'失败，岗位名称已存在");
+            return error("修改岗位'" + postDTO.getPostName() + "'失败，岗位名称已存在");
         }
-        else if (!postService.checkPostCodeUnique(post))
+        else if (!postService.checkPostCodeUnique(postDTO))
         {
-            return error("修改岗位'" + post.getPostName() + "'失败，岗位编码已存在");
+            return error("修改岗位'" + postDTO.getPostName() + "'失败，岗位编码已存在");
         }
-        post.setUpdateBy(SecurityUtils.getUsername());
-        return toAjax(postService.updatePost(post));
+        postDTO.setUpdateBy(SecurityUtils.getUsername());
+        return toAjax(postService.updatePost(postDTO));
     }
 
     /**
@@ -124,7 +125,7 @@ public class SysPostController extends BaseController
     @GetMapping("/optionselect")
     public AjaxResult optionselect()
     {
-        List<SysPost> posts = postService.selectPostAll();
+        List<SysPostVO> posts = postService.selectPostAll();
         return success(posts);
     }
 }

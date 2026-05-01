@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.core.utils.bean.BeanConvertUtils;
 import com.ruoyi.system.domain.SysNotice;
 import com.ruoyi.system.domain.SysNoticeRead;
+import com.ruoyi.system.domain.vo.SysNoticeVO;
 import com.ruoyi.system.mapper.SysNoticeReadMapper;
 import com.ruoyi.system.service.ISysNoticeReadService;
 
@@ -43,9 +45,10 @@ public class SysNoticeReadServiceImpl extends ServiceImpl<SysNoticeReadMapper, S
      * 查询公告列表并标记当前用户已读状态
      */
     @Override
-    public List<SysNotice> selectNoticeListWithReadStatus(Long userId, int limit)
+    public List<SysNoticeVO> selectNoticeListWithReadStatus(Long userId, int limit)
     {
-        return baseMapper.selectNoticeListWithReadStatus(userId, limit);
+        List<SysNotice> list = baseMapper.selectNoticeListWithReadStatus(userId, limit);
+        return BeanConvertUtils.convertList(list, SysNoticeVO.class);
     }
 
     /**

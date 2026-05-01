@@ -3,6 +3,8 @@ package com.ruoyi.system.service;
 import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.system.domain.SysConfig;
+import com.ruoyi.system.domain.dto.SysConfigDTO;
+import com.ruoyi.system.domain.vo.SysConfigVO;
 
 /**
  * 参数配置 服务层
@@ -17,7 +19,7 @@ public interface ISysConfigService extends IService<SysConfig>
      * @param configId 参数配置ID
      * @return 参数配置信息
      */
-    public SysConfig selectConfigById(Long configId);
+    public SysConfigVO selectConfigById(Long configId);
 
     /**
      * 根据键名查询参数配置信息
@@ -30,26 +32,26 @@ public interface ISysConfigService extends IService<SysConfig>
     /**
      * 查询参数配置列表
      * 
-     * @param config 参数配置信息
+     * @param configDTO 参数配置信息
      * @return 参数配置集合
      */
-    public List<SysConfig> selectConfigList(SysConfig config);
+    public List<SysConfigVO> selectConfigList(SysConfigDTO configDTO);
 
     /**
      * 新增参数配置
      * 
-     * @param config 参数配置信息
+     * @param configDTO 参数配置信息
      * @return 结果
      */
-    public int insertConfig(SysConfig config);
+    public int insertConfig(SysConfigDTO configDTO);
 
     /**
      * 修改参数配置
      * 
-     * @param config 参数配置信息
+     * @param configDTO 参数配置信息
      * @return 结果
      */
-    public int updateConfig(SysConfig config);
+    public int updateConfig(SysConfigDTO configDTO);
 
     /**
      * 批量删除参数信息
@@ -76,8 +78,8 @@ public interface ISysConfigService extends IService<SysConfig>
     /**
      * 校验参数键名是否唯一
      * 
-     * @param config 参数信息
+     * @param configDTO 参数信息
      * @return 结果
      */
-    public boolean checkConfigKeyUnique(SysConfig config);
+    public boolean checkConfigKeyUnique(SysConfigDTO configDTO);
 }

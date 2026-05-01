@@ -11,8 +11,11 @@ import com.ruoyi.common.core.constant.UserConstants;
 import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.core.utils.StringUtils;
+import com.ruoyi.common.core.utils.bean.BeanConvertUtils;
 import com.ruoyi.common.redis.service.RedisService;
 import com.ruoyi.system.domain.SysConfig;
+import com.ruoyi.system.domain.dto.SysConfigDTO;
+import com.ruoyi.system.domain.vo.SysConfigVO;
 import com.ruoyi.system.mapper.SysConfigMapper;
 import com.ruoyi.system.service.ISysConfigService;
 
@@ -38,23 +41,18 @@ public class SysConfigServiceImpl extends ServiceImpl<SysConfigMapper, SysConfig
 
     /**
      * 查询参数配置信息
-     * 
-     * @param configId 参数配置ID
-     * @return 参数配置信息
      */
     @Override
-    public SysConfig selectConfigById(Long configId)
+    public SysConfigVO selectConfigById(Long configId)
     {
         SysConfig config = new SysConfig();
         config.setConfigId(configId);
-        return baseMapper.selectConfig(config);
+        SysConfig result = baseMapper.selectConfig(config);
+        return BeanConvertUtils.convert(result, SysConfigVO.class);
     }
 
     /**
      * 根据键名查询参数配置信息
-     * 
-     * @param configKey 参数key
-     * @return 参数键值
      */
     @Override
     public String selectConfigByKey(String configKey)
@@ -77,25 +75,22 @@ public class SysConfigServiceImpl extends ServiceImpl<SysConfigMapper, SysConfig
 
     /**
      * 查询参数配置列表
-     * 
-     * @param config 参数配置信息
-     * @return 参数配置集合
      */
     @Override
-    public List<SysConfig> selectConfigList(SysConfig config)
+    public List<SysConfigVO> selectConfigList(SysConfigDTO configDTO)
     {
-        return baseMapper.selectConfigList(config);
+        SysConfig config = BeanConvertUtils.convert(configDTO, SysConfig.class);
+        List<SysConfig> list = baseMapper.selectConfigList(config);
+        return BeanConvertUtils.convertList(list, SysConfigVO.class);
     }
 
     /**
      * 新增参数配置
-     * 
-     * @param config 参数配置信息
-     * @return 结果
      */
     @Override
-    public int insertConfig(SysConfig config)
+    public int insertConfig(SysConfigDTO configDTO)
     {
+        SysConfig config = BeanConvertUtils.convert(configDTO, SysConfig.class);
         int row = baseMapper.insertConfig(config);
         if (row > 0)
         {
@@ -106,13 +101,11 @@ public class SysConfigServiceImpl extends ServiceImpl<SysConfigMapper, SysConfig
 
     /**
      * 修改参数配置
-     * 
-     * @param config 参数配置信息
-     * @return 结果
      */
     @Override
-    public int updateConfig(SysConfig config)
+    public int updateConfig(SysConfigDTO configDTO)
     {
+        SysConfig config = BeanConvertUtils.convert(configDTO, SysConfig.class);
         SysConfig temp = baseMapper.selectConfigById(config.getConfigId());
         if (!StringUtils.equals(temp.getConfigKey(), config.getConfigKey()))
         {
@@ -129,15 +122,14 @@ public class SysConfigServiceImpl extends ServiceImpl<SysConfigMapper, SysConfig
 
     /**
      * 批量删除参数信息
-     * 
-     * @param configIds 需要删除的参数ID
      */
     @Override
     public void deleteConfigByIds(Long[] configIds)
     {
         for (Long configId : configIds)
         {
-            SysConfig config = selectConfigById(configId);
+            SysConfigVO configVO = selectConfigById(configId);
+            SysConfig config = BeanConvertUtils.convert(configVO, SysConfig.class);
             if (StringUtils.equals(UserConstants.YES, config.getConfigType()))
             {
                 throw new ServiceException(String.format("内置参数【%1$s】不能删除 ", config.getConfigKey()));
@@ -182,13 +174,11 @@ public class SysConfigServiceImpl extends ServiceImpl<SysConfigMapper, SysConfig
 
     /**
      * 校验参数键名是否唯一
-     * 
-     * @param config 参数配置信息
-     * @return 结果
      */
     @Override
-    public boolean checkConfigKeyUnique(SysConfig config)
+    public boolean checkConfigKeyUnique(SysConfigDTO configDTO)
     {
+        SysConfig config = BeanConvertUtils.convert(configDTO, SysConfig.class);
         Long configId = StringUtils.isNull(config.getConfigId()) ? -1L : config.getConfigId();
         SysConfig info = baseMapper.checkConfigKeyUnique(config.getConfigKey());
         if (StringUtils.isNotNull(info) && info.getConfigId().longValue() != configId.longValue())
@@ -200,9 +190,6 @@ public class SysConfigServiceImpl extends ServiceImpl<SysConfigMapper, SysConfig
 
     /**
      * 设置cache key
-     * 
-     * @param configKey 参数键
-     * @return 缓存键key
      */
     private String getCacheKey(String configKey)
     {

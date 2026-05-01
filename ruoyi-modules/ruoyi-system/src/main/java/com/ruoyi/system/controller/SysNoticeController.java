@@ -20,7 +20,8 @@ import com.ruoyi.common.log.annotation.Log;
 import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.security.annotation.RequiresPermissions;
 import com.ruoyi.common.security.utils.SecurityUtils;
-import com.ruoyi.system.domain.SysNotice;
+import com.ruoyi.system.domain.dto.SysNoticeDTO;
+import com.ruoyi.system.domain.vo.SysNoticeVO;
 import com.ruoyi.system.service.ISysNoticeReadService;
 import com.ruoyi.system.service.ISysNoticeService;
 
@@ -44,10 +45,10 @@ public class SysNoticeController extends BaseController
      */
     @RequiresPermissions("system:notice:list")
     @GetMapping("/list")
-    public TableDataInfo list(SysNotice notice)
+    public TableDataInfo list(SysNoticeDTO noticeDTO)
     {
         startPage();
-        List<SysNotice> list = noticeService.selectNoticeList(notice);
+        List<SysNoticeVO> list = noticeService.selectNoticeList(noticeDTO);
         return getDataTable(list);
     }
 
@@ -66,10 +67,10 @@ public class SysNoticeController extends BaseController
     @RequiresPermissions("system:notice:add")
     @Log(title = "通知公告", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@Validated @RequestBody SysNotice notice)
+    public AjaxResult add(@Validated @RequestBody SysNoticeDTO noticeDTO)
     {
-        notice.setCreateBy(SecurityUtils.getUsername());
-        return toAjax(noticeService.insertNotice(notice));
+        noticeDTO.setCreateBy(SecurityUtils.getUsername());
+        return toAjax(noticeService.insertNotice(noticeDTO));
     }
 
     /**
@@ -78,10 +79,10 @@ public class SysNoticeController extends BaseController
     @RequiresPermissions("system:notice:edit")
     @Log(title = "通知公告", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@Validated @RequestBody SysNotice notice)
+    public AjaxResult edit(@Validated @RequestBody SysNoticeDTO noticeDTO)
     {
-        notice.setUpdateBy(SecurityUtils.getUsername());
-        return toAjax(noticeService.updateNotice(notice));
+        noticeDTO.setUpdateBy(SecurityUtils.getUsername());
+        return toAjax(noticeService.updateNotice(noticeDTO));
     }
 
     /**
@@ -92,7 +93,7 @@ public class SysNoticeController extends BaseController
     public AjaxResult listTop()
     {
         Long userId = SecurityUtils.getUserId();
-        List<SysNotice> list = noticeReadService.selectNoticeListWithReadStatus(userId, 5);
+        List<SysNoticeVO> list = noticeReadService.selectNoticeListWithReadStatus(userId, 5);
         long unreadCount = list.stream().filter(n -> !n.getIsRead()).count();
         AjaxResult result = AjaxResult.success(list);
         result.put("unreadCount", unreadCount);

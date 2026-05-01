@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Set;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.system.domain.SysMenu;
+import com.ruoyi.system.domain.dto.SysMenuDTO;
 import com.ruoyi.system.domain.vo.RouterVo;
+import com.ruoyi.system.domain.vo.SysMenuVO;
 import com.ruoyi.system.domain.vo.TreeSelect;
 
 /**
@@ -20,16 +22,16 @@ public interface ISysMenuService extends IService<SysMenu>
      * @param userId 用户ID
      * @return 菜单列表
      */
-    public List<SysMenu> selectMenuList(Long userId);
+    public List<SysMenuVO> selectMenuList(Long userId);
 
     /**
      * 根据用户查询系统菜单列表
      * 
-     * @param menu 菜单信息
+     * @param menuDTO 菜单信息
      * @param userId 用户ID
      * @return 菜单列表
      */
-    public List<SysMenu> selectMenuList(SysMenu menu, Long userId);
+    public List<SysMenuVO> selectMenuList(SysMenuDTO menuDTO, Long userId);
 
     /**
      * 根据用户ID查询权限
@@ -93,7 +95,7 @@ public interface ISysMenuService extends IService<SysMenu>
      * @param menuId 菜单ID
      * @return 菜单信息
      */
-    public SysMenu selectMenuById(Long menuId);
+    public SysMenuVO selectMenuById(Long menuId);
 
     /**
      * 是否存在菜单子节点
@@ -114,18 +116,18 @@ public interface ISysMenuService extends IService<SysMenu>
     /**
      * 新增保存菜单信息
      * 
-     * @param menu 菜单信息
+     * @param menuDTO 菜单信息
      * @return 结果
      */
-    public int insertMenu(SysMenu menu);
+    public int insertMenu(SysMenuDTO menuDTO);
 
     /**
      * 修改保存菜单信息
      * 
-     * @param menu 菜单信息
+     * @param menuDTO 菜单信息
      * @return 结果
      */
-    public int updateMenu(SysMenu menu);
+    public int updateMenu(SysMenuDTO menuDTO);
 
     /**
      * 保存菜单排序
@@ -146,16 +148,16 @@ public interface ISysMenuService extends IService<SysMenu>
     /**
      * 校验菜单名称是否唯一
      * 
-     * @param menu 菜单信息
+     * @param menuDTO 菜单信息
      * @return 结果
      */
-    public boolean checkMenuNameUnique(SysMenu menu);
+    public boolean checkMenuNameUnique(SysMenuDTO menuDTO);
 
     /**
      * 校验路由组合是否唯一
      *
-     * @param menu 菜单信息
+     * @param menuDTO 菜单信息
      * @return 结果
      */
-    public boolean checkRouteConfigUnique(SysMenu menu);
+    public boolean checkRouteConfigUnique(SysMenuDTO menuDTO);
 }

@@ -19,8 +19,11 @@ import com.ruoyi.common.core.web.domain.AjaxResult;
 import com.ruoyi.common.log.annotation.Log;
 import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.security.annotation.RequiresPermissions;
+import com.ruoyi.common.core.utils.bean.BeanConvertUtils;
 import com.ruoyi.common.security.utils.SecurityUtils;
 import com.ruoyi.system.domain.SysMenu;
+import com.ruoyi.system.domain.dto.SysMenuDTO;
+import com.ruoyi.system.domain.vo.SysMenuVO;
 import com.ruoyi.system.service.ISysMenuService;
 
 /**
@@ -40,10 +43,10 @@ public class SysMenuController extends BaseController
      */
     @RequiresPermissions("system:menu:list")
     @GetMapping("/list")
-    public AjaxResult list(SysMenu menu)
+    public AjaxResult list(SysMenuDTO menuDTO)
     {
         Long userId = SecurityUtils.getUserId();
-        List<SysMenu> menus = menuService.selectMenuList(menu, userId);
+        List<SysMenuVO> menus = menuService.selectMenuList(menuDTO, userId);
         return success(menus);
     }
 
@@ -61,11 +64,12 @@ public class SysMenuController extends BaseController
      * 获取菜单下拉树列表
      */
     @GetMapping("/treeselect")
-    public AjaxResult treeselect(SysMenu menu)
+    public AjaxResult treeselect(SysMenuDTO menuDTO)
     {
         Long userId = SecurityUtils.getUserId();
-        List<SysMenu> menus = menuService.selectMenuList(menu, userId);
-        return success(menuService.buildMenuTreeSelect(menus));
+        List<SysMenuVO> menus = menuService.selectMenuList(menuDTO, userId);
+        SysMenu menu = BeanConvertUtils.convert(menuDTO, SysMenu.class);
+        return success(menuService.buildMenuTreeSelect(menuService.selectMenuTreeByUserId(userId)));
     }
 
     /**
@@ -75,7 +79,7 @@ public class SysMenuController extends BaseController
     public AjaxResult roleMenuTreeselect(@PathVariable("roleId") Long roleId)
     {
         Long userId = SecurityUtils.getUserId();
-        List<SysMenu> menus = menuService.selectMenuList(userId);
+        List<SysMenu> menus = menuService.selectMenuTreeByUserId(userId);
         AjaxResult ajax = AjaxResult.success();
         ajax.put("checkedKeys", menuService.selectMenuListByRoleId(roleId));
         ajax.put("menus", menuService.buildMenuTreeSelect(menus));
@@ -88,22 +92,22 @@ public class SysMenuController extends BaseController
     @RequiresPermissions("system:menu:add")
     @Log(title = "菜单管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@Validated @RequestBody SysMenu menu)
+    public AjaxResult add(@Validated @RequestBody SysMenuDTO menuDTO)
     {
-        if (!menuService.checkMenuNameUnique(menu))
+        if (!menuService.checkMenuNameUnique(menuDTO))
         {
-            return error("新增菜单'" + menu.getMenuName() + "'失败，菜单名称已存在");
+            return error("新增菜单'" + menuDTO.getMenuName() + "'失败，菜单名称已存在");
         }
-        else if (UserConstants.YES_FRAME.equals(menu.getIsFrame()) && !StringUtils.ishttp(menu.getPath()))
+        else if (UserConstants.YES_FRAME.equals(menuDTO.getIsFrame()) && !StringUtils.ishttp(menuDTO.getPath()))
         {
-            return error("新增菜单'" + menu.getMenuName() + "'失败，地址必须以http(s)://开头");
+            return error("新增菜单'" + menuDTO.getMenuName() + "'失败，地址必须以http(s)://开头");
         }
-        else if (!menuService.checkRouteConfigUnique(menu))
+        else if (!menuService.checkRouteConfigUnique(menuDTO))
         {
-            return error("新增菜单'" + menu.getMenuName() + "'失败，路由名称或地址已存在");
+            return error("新增菜单'" + menuDTO.getMenuName() + "'失败，路由名称或地址已存在");
         }
-        menu.setCreateBy(SecurityUtils.getUsername());
-        return toAjax(menuService.insertMenu(menu));
+        menuDTO.setCreateBy(SecurityUtils.getUsername());
+        return toAjax(menuService.insertMenu(menuDTO));
     }
 
     /**
@@ -112,26 +116,26 @@ public class SysMenuController extends BaseController
     @RequiresPermissions("system:menu:edit")
     @Log(title = "菜单管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@Validated @RequestBody SysMenu menu)
+    public AjaxResult edit(@Validated @RequestBody SysMenuDTO menuDTO)
     {
-        if (!menuService.checkMenuNameUnique(menu))
+        if (!menuService.checkMenuNameUnique(menuDTO))
         {
-            return error("修改菜单'" + menu.getMenuName() + "'失败，菜单名称已存在");
+            return error("修改菜单'" + menuDTO.getMenuName() + "'失败，菜单名称已存在");
         }
-        else if (UserConstants.YES_FRAME.equals(menu.getIsFrame()) && !StringUtils.ishttp(menu.getPath()))
+        else if (UserConstants.YES_FRAME.equals(menuDTO.getIsFrame()) && !StringUtils.ishttp(menuDTO.getPath()))
         {
-            return error("修改菜单'" + menu.getMenuName() + "'失败，地址必须以http(s)://开头");
+            return error("修改菜单'" + menuDTO.getMenuName() + "'失败，地址必须以http(s)://开头");
         }
-        else if (menu.getMenuId().equals(menu.getParentId()))
+        else if (menuDTO.getMenuId().equals(menuDTO.getParentId()))
         {
-            return error("修改菜单'" + menu.getMenuName() + "'失败，上级菜单不能选择自己");
+            return error("修改菜单'" + menuDTO.getMenuName() + "'失败，上级菜单不能选择自己");
         }
-        else if (!menuService.checkRouteConfigUnique(menu))
+        else if (!menuService.checkRouteConfigUnique(menuDTO))
         {
-            return error("修改菜单'" + menu.getMenuName() + "'失败，路由名称或地址已存在");
+            return error("修改菜单'" + menuDTO.getMenuName() + "'失败，路由名称或地址已存在");
         }
-        menu.setUpdateBy(SecurityUtils.getUsername());
-        return toAjax(menuService.updateMenu(menu));
+        menuDTO.setUpdateBy(SecurityUtils.getUsername());
+        return toAjax(menuService.updateMenu(menuDTO));
     }
 
     /**

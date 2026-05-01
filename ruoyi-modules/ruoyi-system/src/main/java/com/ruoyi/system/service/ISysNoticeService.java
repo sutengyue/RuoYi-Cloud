@@ -3,6 +3,8 @@ package com.ruoyi.system.service;
 import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.system.domain.SysNotice;
+import com.ruoyi.system.domain.dto.SysNoticeDTO;
+import com.ruoyi.system.domain.vo.SysNoticeVO;
 
 /**
  * 公告 服务层
@@ -17,31 +19,31 @@ public interface ISysNoticeService extends IService<SysNotice>
      * @param noticeId 公告ID
      * @return 公告信息
      */
-    public SysNotice selectNoticeById(Long noticeId);
+    public SysNoticeVO selectNoticeById(Long noticeId);
 
     /**
      * 查询公告列表
      * 
-     * @param notice 公告信息
+     * @param noticeDTO 公告信息
      * @return 公告集合
      */
-    public List<SysNotice> selectNoticeList(SysNotice notice);
+    public List<SysNoticeVO> selectNoticeList(SysNoticeDTO noticeDTO);
 
     /**
      * 新增公告
      * 
-     * @param notice 公告信息
+     * @param noticeDTO 公告信息
      * @return 结果
      */
-    public int insertNotice(SysNotice notice);
+    public int insertNotice(SysNoticeDTO noticeDTO);
 
     /**
      * 修改公告
      * 
-     * @param notice 公告信息
+     * @param noticeDTO 公告信息
      * @return 结果
      */
-    public int updateNotice(SysNotice notice);
+    public int updateNotice(SysNoticeDTO noticeDTO);
 
     /**
      * 删除公告信息

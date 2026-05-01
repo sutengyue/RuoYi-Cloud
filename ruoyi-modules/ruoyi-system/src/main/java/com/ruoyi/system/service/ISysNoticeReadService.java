@@ -3,8 +3,8 @@ package com.ruoyi.system.service;
 import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ruoyi.system.domain.SysNotice;
 import com.ruoyi.system.domain.SysNoticeRead;
+import com.ruoyi.system.domain.vo.SysNoticeVO;
 
 /**
  * 公告已读记录 服务层
@@ -36,7 +36,7 @@ public interface ISysNoticeReadService extends IService<SysNoticeRead>
      * @param limit  最多返回条数
      * @return 带 isRead 标记的公告列表
      */
-    public List<SysNotice> selectNoticeListWithReadStatus(Long userId, int limit);
+    public List<SysNoticeVO> selectNoticeListWithReadStatus(Long userId, int limit);
 
     /**
      * 批量标记已读

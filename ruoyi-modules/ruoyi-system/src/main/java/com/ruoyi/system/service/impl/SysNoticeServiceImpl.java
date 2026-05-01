@@ -3,7 +3,10 @@ package com.ruoyi.system.service.impl;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.core.utils.bean.BeanConvertUtils;
 import com.ruoyi.system.domain.SysNotice;
+import com.ruoyi.system.domain.dto.SysNoticeDTO;
+import com.ruoyi.system.domain.vo.SysNoticeVO;
 import com.ruoyi.system.mapper.SysNoticeMapper;
 import com.ruoyi.system.service.ISysNoticeService;
 
@@ -18,57 +21,47 @@ public class SysNoticeServiceImpl extends ServiceImpl<SysNoticeMapper, SysNotice
 
     /**
      * 查询公告信息
-     * 
-     * @param noticeId 公告ID
-     * @return 公告信息
      */
     @Override
-    public SysNotice selectNoticeById(Long noticeId)
+    public SysNoticeVO selectNoticeById(Long noticeId)
     {
-        return baseMapper.selectNoticeById(noticeId);
+        SysNotice notice = baseMapper.selectNoticeById(noticeId);
+        return BeanConvertUtils.convert(notice, SysNoticeVO.class);
     }
 
     /**
      * 查询公告列表
-     * 
-     * @param notice 公告信息
-     * @return 公告集合
      */
     @Override
-    public List<SysNotice> selectNoticeList(SysNotice notice)
+    public List<SysNoticeVO> selectNoticeList(SysNoticeDTO noticeDTO)
     {
-        return baseMapper.selectNoticeList(notice);
+        SysNotice notice = BeanConvertUtils.convert(noticeDTO, SysNotice.class);
+        List<SysNotice> list = baseMapper.selectNoticeList(notice);
+        return BeanConvertUtils.convertList(list, SysNoticeVO.class);
     }
 
     /**
      * 新增公告
-     * 
-     * @param notice 公告信息
-     * @return 结果
      */
     @Override
-    public int insertNotice(SysNotice notice)
+    public int insertNotice(SysNoticeDTO noticeDTO)
     {
+        SysNotice notice = BeanConvertUtils.convert(noticeDTO, SysNotice.class);
         return baseMapper.insertNotice(notice);
     }
 
     /**
      * 修改公告
-     * 
-     * @param notice 公告信息
-     * @return 结果
      */
     @Override
-    public int updateNotice(SysNotice notice)
+    public int updateNotice(SysNoticeDTO noticeDTO)
     {
+        SysNotice notice = BeanConvertUtils.convert(noticeDTO, SysNotice.class);
         return baseMapper.updateNotice(notice);
     }
 
     /**
      * 删除公告对象
-     * 
-     * @param noticeId 公告ID
-     * @return 结果
      */
     @Override
     public int deleteNoticeById(Long noticeId)
@@ -78,9 +71,6 @@ public class SysNoticeServiceImpl extends ServiceImpl<SysNoticeMapper, SysNotice
 
     /**
      * 批量删除公告信息
-     * 
-     * @param noticeIds 需要删除的公告ID
-     * @return 结果
      */
     @Override
     public int deleteNoticeByIds(Long[] noticeIds)
