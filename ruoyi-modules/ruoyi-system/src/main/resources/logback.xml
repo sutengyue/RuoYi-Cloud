@@ -10,6 +10,9 @@
 		<encoder>
 			<pattern>${log.pattern}</pattern>
 		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>WARN</level>
+		</filter>
 	</appender>
 
     <!-- 系统日志输出 -->
