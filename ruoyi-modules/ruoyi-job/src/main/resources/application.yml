@@ -1,0 +1,15 @@
+# MyBatis-Plus 配置
+mybatis-plus:
+  # 搜索指定包别名
+  type-aliases-package: com.ruoyi.job.domain
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapper-locations: classpath:mapper/**/*.xml
+  # 全局配置
+  global-config:
+    db-config:
+      # 主键类型
+      id-type: auto
+  # 配置
+  configuration:
+    # 开启驼峰命名转换
+    map-underscore-to-camel-case: true

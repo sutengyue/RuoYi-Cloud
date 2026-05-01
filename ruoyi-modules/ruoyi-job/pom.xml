@@ -71,6 +71,12 @@
             <artifactId>ruoyi-common-swagger</artifactId>
         </dependency>
         
+        <!-- MyBatis-Plus -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+        </dependency>
+        
     </dependencies>
 
     <build>

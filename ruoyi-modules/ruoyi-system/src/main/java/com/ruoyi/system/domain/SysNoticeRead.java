@@ -1,6 +1,10 @@
 package com.ruoyi.system.domain;
 
 import java.util.Date;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -9,18 +13,23 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  *
  * @author ruoyi
  */
+@TableName("sys_notice_read")
 public class SysNoticeRead
 {
     /** 主键 */
+    @TableId(value = "read_id", type = IdType.AUTO)
     private Long readId;
 
     /** 公告ID */
+    @TableField("notice_id")
     private Long noticeId;
 
     /** 用户ID */
+    @TableField("user_id")
     private Long userId;
 
     /** 阅读时间 */
+    @TableField("read_time")
     private Date readTime;
 
     public Long getReadId()

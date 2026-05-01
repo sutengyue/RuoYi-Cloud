@@ -3,6 +3,10 @@ package com.ruoyi.system.api.domain;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.core.annotation.Excel;
@@ -14,20 +18,24 @@ import com.ruoyi.common.core.web.domain.BaseEntity;
  * 
  * @author ruoyi
  */
+@TableName("sys_dict_type")
 public class SysDictType extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
     /** 字典主键 */
     @Excel(name = "字典主键", cellType = ColumnType.NUMERIC)
+    @TableId(value = "dict_id", type = IdType.AUTO)
     private Long dictId;
 
     /** 字典名称 */
     @Excel(name = "字典名称")
+    @TableField("dict_name")
     private String dictName;
 
     /** 字典类型 */
     @Excel(name = "字典类型")
+    @TableField("dict_type")
     private String dictType;
 
     /** 状态（0正常 1停用） */

@@ -1,0 +1,19 @@
+# MyBatis-Plus 配置
+mybatis-plus:
+  # 搜索指定包别名（包含 api 模块和本地模块的实体）
+  type-aliases-package: com.ruoyi.system.api.domain,com.ruoyi.system.domain
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapper-locations: classpath:mapper/**/*.xml
+  # 全局配置
+  global-config:
+    db-config:
+      # 主键类型
+      id-type: auto
+      # 逻辑删除配置
+      logic-delete-field: delFlag
+      logic-delete-value: 2
+      logic-not-delete-value: 0
+  # 配置
+  configuration:
+    # 开启驼峰命名转换
+    map-underscore-to-camel-case: true

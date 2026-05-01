@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.core.constant.UserConstants;
 import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.text.Convert;
@@ -27,11 +28,8 @@ import com.ruoyi.system.service.ISysDeptService;
  * @author ruoyi
  */
 @Service
-public class SysDeptServiceImpl implements ISysDeptService
+public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> implements ISysDeptService
 {
-    @Autowired
-    private SysDeptMapper deptMapper;
-
     @Autowired
     private SysRoleMapper roleMapper;
 
@@ -45,7 +43,7 @@ public class SysDeptServiceImpl implements ISysDeptService
     @DataScope(deptAlias = "d")
     public List<SysDept> selectDeptList(SysDept dept)
     {
-        return deptMapper.selectDeptList(dept);
+        return baseMapper.selectDeptList(dept);
     }
 
     /**
@@ -111,7 +109,7 @@ public class SysDeptServiceImpl implements ISysDeptService
     public List<Long> selectDeptListByRoleId(Long roleId)
     {
         SysRole role = roleMapper.selectRoleById(roleId);
-        return deptMapper.selectDeptListByRoleId(roleId, role.isDeptCheckStrictly());
+        return baseMapper.selectDeptListByRoleId(roleId, role.isDeptCheckStrictly());
     }
 
     /**
@@ -123,7 +121,7 @@ public class SysDeptServiceImpl implements ISysDeptService
     @Override
     public SysDept selectDeptById(Long deptId)
     {
-        return deptMapper.selectDeptById(deptId);
+        return baseMapper.selectDeptById(deptId);
     }
 
     /**
@@ -135,7 +133,7 @@ public class SysDeptServiceImpl implements ISysDeptService
     @Override
     public int selectNormalChildrenDeptById(Long deptId)
     {
-        return deptMapper.selectNormalChildrenDeptById(deptId);
+        return baseMapper.selectNormalChildrenDeptById(deptId);
     }
 
     /**
@@ -147,7 +145,7 @@ public class SysDeptServiceImpl implements ISysDeptService
     @Override
     public boolean hasChildByDeptId(Long deptId)
     {
-        int result = deptMapper.hasChildByDeptId(deptId);
+        int result = baseMapper.hasChildByDeptId(deptId);
         return result > 0;
     }
 
@@ -160,7 +158,7 @@ public class SysDeptServiceImpl implements ISysDeptService
     @Override
     public boolean checkDeptExistUser(Long deptId)
     {
-        int result = deptMapper.checkDeptExistUser(deptId);
+        int result = baseMapper.checkDeptExistUser(deptId);
         return result > 0;
     }
 
@@ -174,7 +172,7 @@ public class SysDeptServiceImpl implements ISysDeptService
     public boolean checkDeptNameUnique(SysDept dept)
     {
         Long deptId = StringUtils.isNull(dept.getDeptId()) ? -1L : dept.getDeptId();
-        SysDept info = deptMapper.checkDeptNameUnique(dept.getDeptName(), dept.getParentId());
+        SysDept info = baseMapper.checkDeptNameUnique(dept.getDeptName(), dept.getParentId());
         if (StringUtils.isNotNull(info) && info.getDeptId().longValue() != deptId.longValue())
         {
             return UserConstants.NOT_UNIQUE;
@@ -211,14 +209,14 @@ public class SysDeptServiceImpl implements ISysDeptService
     @Override
     public int insertDept(SysDept dept)
     {
-        SysDept info = deptMapper.selectDeptById(dept.getParentId());
+        SysDept info = baseMapper.selectDeptById(dept.getParentId());
         // 如果父节点不为正常状态,则不允许新增子节点
         if (!UserConstants.DEPT_NORMAL.equals(info.getStatus()))
         {
             throw new ServiceException("部门停用，不允许新增");
         }
         dept.setAncestors(info.getAncestors() + "," + dept.getParentId());
-        return deptMapper.insertDept(dept);
+        return baseMapper.insertDept(dept);
     }
 
     /**
@@ -230,8 +228,8 @@ public class SysDeptServiceImpl implements ISysDeptService
     @Override
     public int updateDept(SysDept dept)
     {
-        SysDept newParentDept = deptMapper.selectDeptById(dept.getParentId());
-        SysDept oldDept = deptMapper.selectDeptById(dept.getDeptId());
+        SysDept newParentDept = baseMapper.selectDeptById(dept.getParentId());
+        SysDept oldDept = baseMapper.selectDeptById(dept.getDeptId());
         if (StringUtils.isNotNull(newParentDept) && StringUtils.isNotNull(oldDept))
         {
             String newAncestors = newParentDept.getAncestors() + "," + newParentDept.getDeptId();
@@ -239,7 +237,7 @@ public class SysDeptServiceImpl implements ISysDeptService
             dept.setAncestors(newAncestors);
             updateDeptChildren(dept.getDeptId(), newAncestors, oldAncestors);
         }
-        int result = deptMapper.updateDept(dept);
+        int result = baseMapper.updateDept(dept);
         if (UserConstants.DEPT_NORMAL.equals(dept.getStatus()) && StringUtils.isNotEmpty(dept.getAncestors())
                 && !StringUtils.equals("0", dept.getAncestors()))
         {
@@ -258,7 +256,7 @@ public class SysDeptServiceImpl implements ISysDeptService
     {
         String ancestors = dept.getAncestors();
         Long[] deptIds = Convert.toLongArray(ancestors);
-        deptMapper.updateDeptStatusNormal(deptIds);
+        baseMapper.updateDeptStatusNormal(deptIds);
     }
 
     /**
@@ -270,14 +268,14 @@ public class SysDeptServiceImpl implements ISysDeptService
      */
     public void updateDeptChildren(Long deptId, String newAncestors, String oldAncestors)
     {
-        List<SysDept> children = deptMapper.selectChildrenDeptById(deptId);
+        List<SysDept> children = baseMapper.selectChildrenDeptById(deptId);
         for (SysDept child : children)
         {
             child.setAncestors(child.getAncestors().replaceFirst(oldAncestors, newAncestors));
         }
         if (children.size() > 0)
         {
-            deptMapper.updateDeptChildren(children);
+            baseMapper.updateDeptChildren(children);
         }
     }
 
@@ -298,7 +296,7 @@ public class SysDeptServiceImpl implements ISysDeptService
                 SysDept dept = new SysDept();
                 dept.setDeptId(Convert.toLong(deptIds[i]));
                 dept.setOrderNum(Convert.toInt(orderNums[i]));
-                deptMapper.updateDeptSort(dept);
+                baseMapper.updateDeptSort(dept);
             }
         }
         catch (Exception e)
@@ -316,7 +314,7 @@ public class SysDeptServiceImpl implements ISysDeptService
     @Override
     public int deleteDeptById(Long deptId)
     {
-        return deptMapper.deleteDeptById(deptId);
+        return baseMapper.deleteDeptById(deptId);
     }
 
     /**

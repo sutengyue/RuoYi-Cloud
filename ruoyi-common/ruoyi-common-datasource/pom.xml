@@ -31,5 +31,11 @@
             <version>${dynamic-ds.version}</version>
         </dependency>
 
+        <!-- MyBatis-Plus -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+        </dependency>
+
     </dependencies>
 </project>

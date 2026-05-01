@@ -6,6 +6,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.core.web.domain.BaseEntity;
@@ -15,23 +20,28 @@ import com.ruoyi.common.core.web.domain.BaseEntity;
  * 
  * @author ruoyi
  */
+@TableName("sys_dept")
 public class SysDept extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
     /** 部门ID */
+    @TableId(value = "dept_id", type = IdType.AUTO)
     private Long deptId;
 
     /** 父部门ID */
+    @TableField("parent_id")
     private Long parentId;
 
     /** 祖级列表 */
     private String ancestors;
 
     /** 部门名称 */
+    @TableField("dept_name")
     private String deptName;
 
     /** 显示顺序 */
+    @TableField("order_num")
     private Integer orderNum;
 
     /** 负责人 */
@@ -47,12 +57,16 @@ public class SysDept extends BaseEntity
     private String status;
 
     /** 删除标志（0代表存在 2代表删除） */
+    @TableLogic
+    @TableField("del_flag")
     private String delFlag;
 
     /** 父部门名称 */
+    @TableField(exist = false)
     private String parentName;
     
     /** 子部门 */
+    @TableField(exist = false)
     private List<SysDept> children = new ArrayList<SysDept>();
 
     public Long getDeptId()

@@ -5,6 +5,11 @@ import java.util.List;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.core.web.domain.BaseEntity;
@@ -14,23 +19,29 @@ import com.ruoyi.common.core.web.domain.BaseEntity;
  * 
  * @author ruoyi
  */
+@TableName("sys_menu")
 public class SysMenu extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
     /** 菜单ID */
+    @TableId(value = "menu_id", type = IdType.AUTO)
     private Long menuId;
 
     /** 菜单名称 */
+    @TableField("menu_name")
     private String menuName;
 
     /** 父菜单名称 */
+    @TableField(exist = false)
     private String parentName;
 
     /** 父菜单ID */
+    @TableField("parent_id")
     private Long parentId;
 
     /** 显示顺序 */
+    @TableField("order_num")
     private Integer orderNum;
 
     /** 路由地址 */
@@ -43,15 +54,19 @@ public class SysMenu extends BaseEntity
     private String query;
 
     /** 路由名称，默认和路由地址相同的驼峰格式（注意：因为vue3版本的router会删除名称相同路由，为避免名字的冲突，特殊情况可以自定义） */
+    @TableField("route_name")
     private String routeName;
 
     /** 是否为外链（0是 1否） */
+    @TableField("is_frame")
     private String isFrame;
 
     /** 是否缓存（0缓存 1不缓存） */
+    @TableField("is_cache")
     private String isCache;
 
     /** 类型（M目录 C菜单 F按钮） */
+    @TableField("menu_type")
     private String menuType;
 
     /** 显示状态（0显示 1隐藏） */
@@ -67,6 +82,7 @@ public class SysMenu extends BaseEntity
     private String icon;
 
     /** 子菜单 */
+    @TableField(exist = false)
     private List<SysMenu> children = new ArrayList<SysMenu>();
 
     public Long getMenuId()

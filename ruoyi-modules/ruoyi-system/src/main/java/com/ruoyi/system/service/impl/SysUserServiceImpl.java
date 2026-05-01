@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.core.constant.UserConstants;
 import com.ruoyi.common.core.exception.ServiceException;
 import com.ruoyi.common.core.utils.SpringUtils;
@@ -37,12 +38,9 @@ import com.ruoyi.system.service.ISysUserService;
  * @author ruoyi
  */
 @Service
-public class SysUserServiceImpl implements ISysUserService
+public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService
 {
     private static final Logger log = LoggerFactory.getLogger(SysUserServiceImpl.class);
-
-    @Autowired
-    private SysUserMapper userMapper;
 
     @Autowired
     private SysRoleMapper roleMapper;
@@ -75,7 +73,7 @@ public class SysUserServiceImpl implements ISysUserService
     @DataScope(deptAlias = "d", userAlias = "u")
     public List<SysUser> selectUserList(SysUser user)
     {
-        return userMapper.selectUserList(user);
+        return baseMapper.selectUserList(user);
     }
 
     /**
@@ -88,7 +86,7 @@ public class SysUserServiceImpl implements ISysUserService
     @DataScope(deptAlias = "d", userAlias = "u")
     public List<SysUser> selectAllocatedList(SysUser user)
     {
-        return userMapper.selectAllocatedList(user);
+        return baseMapper.selectAllocatedList(user);
     }
 
     /**
@@ -101,7 +99,7 @@ public class SysUserServiceImpl implements ISysUserService
     @DataScope(deptAlias = "d", userAlias = "u")
     public List<SysUser> selectUnallocatedList(SysUser user)
     {
-        return userMapper.selectUnallocatedList(user);
+        return baseMapper.selectUnallocatedList(user);
     }
 
     /**
@@ -113,7 +111,7 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public SysUser selectUserByUserName(String userName)
     {
-        return userMapper.selectUserByUserName(userName);
+        return baseMapper.selectUserByUserName(userName);
     }
 
     /**
@@ -125,7 +123,7 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public SysUser selectUserById(Long userId)
     {
-        return userMapper.selectUserById(userId);
+        return baseMapper.selectUserById(userId);
     }
 
     /**
@@ -172,7 +170,7 @@ public class SysUserServiceImpl implements ISysUserService
     public boolean checkUserNameUnique(SysUser user)
     {
         Long userId = StringUtils.isNull(user.getUserId()) ? -1L : user.getUserId();
-        SysUser info = userMapper.checkUserNameUnique(user.getUserName());
+        SysUser info = baseMapper.checkUserNameUnique(user.getUserName());
         if (StringUtils.isNotNull(info) && info.getUserId().longValue() != userId.longValue())
         {
             return UserConstants.NOT_UNIQUE;
@@ -190,7 +188,7 @@ public class SysUserServiceImpl implements ISysUserService
     public boolean checkPhoneUnique(SysUser user)
     {
         Long userId = StringUtils.isNull(user.getUserId()) ? -1L : user.getUserId();
-        SysUser info = userMapper.checkPhoneUnique(user.getPhonenumber());
+        SysUser info = baseMapper.checkPhoneUnique(user.getPhonenumber());
         if (StringUtils.isNotNull(info) && info.getUserId().longValue() != userId.longValue())
         {
             return UserConstants.NOT_UNIQUE;
@@ -208,7 +206,7 @@ public class SysUserServiceImpl implements ISysUserService
     public boolean checkEmailUnique(SysUser user)
     {
         Long userId = StringUtils.isNull(user.getUserId()) ? -1L : user.getUserId();
-        SysUser info = userMapper.checkEmailUnique(user.getEmail());
+        SysUser info = baseMapper.checkEmailUnique(user.getEmail());
         if (StringUtils.isNotNull(info) && info.getUserId().longValue() != userId.longValue())
         {
             return UserConstants.NOT_UNIQUE;
@@ -261,7 +259,7 @@ public class SysUserServiceImpl implements ISysUserService
     public int insertUser(SysUser user)
     {
         // 新增用户信息
-        int rows = userMapper.insertUser(user);
+        int rows = baseMapper.insertUser(user);
         // 新增用户岗位关联
         insertUserPost(user);
         // 新增用户与角色管理
@@ -278,7 +276,7 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public boolean registerUser(SysUser user)
     {
-        return userMapper.insertUser(user) > 0;
+        return baseMapper.insertUser(user) > 0;
     }
 
     /**
@@ -300,7 +298,7 @@ public class SysUserServiceImpl implements ISysUserService
         userPostMapper.deleteUserPostByUserId(userId);
         // 新增用户与岗位管理
         insertUserPost(user);
-        return userMapper.updateUser(user);
+        return baseMapper.updateUser(user);
     }
 
     /**
@@ -326,7 +324,7 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public int updateUserStatus(SysUser user)
     {
-        return userMapper.updateUserStatus(user.getUserId(), user.getStatus());
+        return baseMapper.updateUserStatus(user.getUserId(), user.getStatus());
     }
 
     /**
@@ -338,7 +336,7 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public boolean updateUserProfile(SysUser user)
     {
-        return userMapper.updateUser(user) > 0;
+        return baseMapper.updateUser(user) > 0;
     }
 
     /**
@@ -351,7 +349,7 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public boolean updateUserAvatar(Long userId, String avatar)
     {
-        return userMapper.updateUserAvatar(userId, avatar) > 0;
+        return baseMapper.updateUserAvatar(userId, avatar) > 0;
     }
 
     /**
@@ -362,7 +360,7 @@ public class SysUserServiceImpl implements ISysUserService
      */
     public boolean updateLoginInfo(SysUser user)
     {
-        return userMapper.updateLoginInfo(user) > 0;
+        return baseMapper.updateLoginInfo(user) > 0;
     }
 
     /**
@@ -374,7 +372,7 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public int resetPwd(SysUser user)
     {
-        return userMapper.resetUserPwd(user.getUserId(), user.getPassword());
+        return baseMapper.resetUserPwd(user.getUserId(), user.getPassword());
     }
 
     /**
@@ -387,7 +385,7 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public int resetUserPwd(Long userId, String password)
     {
-        return userMapper.resetUserPwd(userId, password);
+        return baseMapper.resetUserPwd(userId, password);
     }
 
     /**
@@ -460,7 +458,7 @@ public class SysUserServiceImpl implements ISysUserService
         userRoleMapper.deleteUserRoleByUserId(userId);
         // 删除用户与岗位表
         userPostMapper.deleteUserPostByUserId(userId);
-        return userMapper.deleteUserById(userId);
+        return baseMapper.deleteUserById(userId);
     }
 
     /**
@@ -482,7 +480,7 @@ public class SysUserServiceImpl implements ISysUserService
         userRoleMapper.deleteUserRole(userIds);
         // 删除用户与岗位关联
         userPostMapper.deleteUserPost(userIds);
-        return userMapper.deleteUserByIds(userIds);
+        return baseMapper.deleteUserByIds(userIds);
     }
 
     /**
@@ -509,7 +507,7 @@ public class SysUserServiceImpl implements ISysUserService
             try
             {
                 // 验证是否存在这个用户
-                SysUser u = userMapper.selectUserByUserName(user.getUserName());
+                SysUser u = baseMapper.selectUserByUserName(user.getUserName());
                 if (StringUtils.isNull(u))
                 {
                     BeanValidators.validateWithException(validator, user);
@@ -517,7 +515,7 @@ public class SysUserServiceImpl implements ISysUserService
                     String password = configService.selectConfigByKey("sys.user.initPassword");
                     user.setPassword(SecurityUtils.encryptPassword(password));
                     user.setCreateBy(operName);
-                    userMapper.insertUser(user);
+                    baseMapper.insertUser(user);
                     successNum++;
                     successMsg.append("<br/>" + successNum + "、账号 " + user.getUserName() + " 导入成功");
                 }
@@ -530,7 +528,7 @@ public class SysUserServiceImpl implements ISysUserService
                     user.setUserId(u.getUserId());
                     user.setDeptId(u.getDeptId());
                     user.setUpdateBy(operName);
-                    userMapper.updateUser(user);
+                    baseMapper.updateUser(user);
                     successNum++;
                     successMsg.append("<br/>" + successNum + "、账号 " + user.getUserName() + " 更新成功");
                 }
