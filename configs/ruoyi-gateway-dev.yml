@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: ruoyi-flowable
+          uri: http://localhost:9206
+          predicates:
+            - Path=/flowable/**
+          filters:
+            - StripPrefix=1

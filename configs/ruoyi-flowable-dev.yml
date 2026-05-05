@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/ry-flowable?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
-    password: password
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
@@ -21,7 +21,7 @@ spring:
       test-on-return: false
       pool-prepared-statements: true
       max-pool-prepared-statement-per-connection-size: 20
-      filters: stat,wall,log4j2
+      filters: stat,wall,slf4j
       connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
       use-global-data-source-stat: true
 
@@ -32,21 +32,15 @@ spring:
       max-request-size: 10MB
 
 flowable:
-  database-schema-update: false
-  async-executor-activate: false
+  process:
+    database-schema-update: false
+    async-executor-activate: false
   idm:
-    enabled: true
-  rest:
     enabled: true
   content:
     storage:
       type: filesystem
       root-folder: ${user.dir}/flowable-content
-
-mybatis-plus:
-  configuration:
-    map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 logging:
   level:
